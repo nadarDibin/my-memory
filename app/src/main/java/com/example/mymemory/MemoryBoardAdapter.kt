@@ -4,7 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.min
 
 //    RecyclerView.Adapter<RecyclerView.ViewHolder>()
 // MBA Class is a Sub-class of RV Adapter Class, parameterised by RV.VH
@@ -15,7 +17,19 @@ class MemoryBoardAdapter(private val context: Context, private val numMemoryPiec
         RecyclerView.Adapter<MemoryBoardAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(context).inflate(R.layout.memory_card, parent, false) // inflate returns the actual view which was created
+            val cardWidth = parent.width / 2
+            val cardHeight = parent.height / 4
+            val cardSideLength = min(cardHeight, cardWidth)
+            val view = LayoutInflater.from(context).inflate(
+                R.layout.memory_card,
+                parent,
+                false
+            ) // inflate returns the actual view which was created
+
+            val layoutParams = view.findViewById<CardView>(R.id.cardView).layoutParams
+            layoutParams.width = cardSideLength
+            layoutParams.height = cardSideLength
+
             return ViewHolder(view)
         }
 
@@ -30,4 +44,4 @@ class MemoryBoardAdapter(private val context: Context, private val numMemoryPiec
 //                TODO("Not yet implemented")
             }
         }
-}
+    }
