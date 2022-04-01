@@ -8,13 +8,14 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mymemory.models.BoardSize
 import kotlin.math.min
 
 //    RecyclerView.Adapter<RecyclerView.ViewHolder>()
 // MBA Class is a Sub-class of RV Adapter Class, parameterised by RV.VH
 // VH is an Object that provides access to all the views of 1 RV element(1 Memory Piece in the Game)
 
-class MemoryBoardAdapter(private val context: Context, private val numMemoryPieces: Int) :
+class MemoryBoardAdapter(private val context: Context, private val boardSize: BoardSize) :
 /**                                Using custom viewHolder*/
         RecyclerView.Adapter<MemoryBoardAdapter.ViewHolder>() {
 
@@ -26,8 +27,8 @@ class MemoryBoardAdapter(private val context: Context, private val numMemoryPiec
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val cardWidth = parent.width / 2 - (2 * MARGIN_SIZE)
-            val cardHeight = parent.height / 4 - (2 * MARGIN_SIZE)
+            val cardWidth = parent.width / boardSize.getWidth() - (2 * MARGIN_SIZE)
+            val cardHeight = parent.height / boardSize.getHeight() - (2 * MARGIN_SIZE)
             val cardSideLength = min(cardHeight, cardWidth)
             val view = LayoutInflater.from(context).inflate(
                 R.layout.memory_card,
@@ -44,7 +45,7 @@ class MemoryBoardAdapter(private val context: Context, private val numMemoryPiec
             return ViewHolder(view)
         }
 
-        override fun getItemCount(): Int = this.numMemoryPieces
+        override fun getItemCount(): Int = this.boardSize.numCards
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.bind(position)

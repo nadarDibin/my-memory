@@ -5,6 +5,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mymemory.models.BoardSize
 
 class MainActivity : AppCompatActivity() {
 
@@ -12,6 +13,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var rvBoard: RecyclerView
     private lateinit var tvNumMoves: TextView
     private lateinit var tvNumPairs: TextView
+
+    private val boardSize: BoardSize = BoardSize.HARD
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,9 +24,9 @@ class MainActivity : AppCompatActivity() {
         tvNumMoves = findViewById(R.id.tvNumberOfMoves)
         tvNumPairs = findViewById(R.id.tvNumberOfPairs)
 
-        rvBoard.adapter = MemoryBoardAdapter(this, 8)
+        rvBoard.adapter = MemoryBoardAdapter(this, boardSize)
         rvBoard.setHasFixedSize(true) // Optimisation
-        rvBoard.layoutManager = GridLayoutManager(this, 2)
+        rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
         /**                                What is context exactly?  */
     }
 
@@ -32,4 +35,3 @@ class MainActivity : AppCompatActivity() {
      *     Adapter: Takes underlying dataset of the RV and adapts each piece of data into a view
      */
 }
-/***/
