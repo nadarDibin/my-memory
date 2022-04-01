@@ -1,14 +1,19 @@
 package com.example.mymemory
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymemory.models.BoardSize
-import com.example.mymemory.utils.DEFAULT_ICONS
+import com.example.mymemory.models.MemoryGame
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TAG = "Main Activity"
+    }
 
     /** lateinit because the values are set in the onCreate() and not when the class is constructed */
     private lateinit var rvBoard: RecyclerView
@@ -25,10 +30,19 @@ class MainActivity : AppCompatActivity() {
         tvNumMoves = findViewById(R.id.tvNumberOfMoves)
         tvNumPairs = findViewById(R.id.tvNumberOfPairs)
 
-        val chosenImages = DEFAULT_ICONS.shuffled().take(boardSize.getNumPairs())
-        val randomizedImages = (chosenImages + chosenImages).shuffled()
+        val memoryGame = MemoryGame(boardSize)
 
-        rvBoard.adapter = MemoryBoardAdapter(this, boardSize, randomizedImages)
+        rvBoard.adapter = MemoryBoardAdapter(
+            this,
+            boardSize,
+            memoryGame.cards,
+            object : MemoryBoardAdapter.CardClickListener {
+                /** Creating an anonymous class of CardClickListener */
+                override fun onCardClicked(position: Int) {
+                    Log.i(TAG, "Card clicked $position")
+                }
+            }
+        )
         rvBoard.setHasFixedSize(true) // Optimisation
         rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
         /**                                What is context exactly?  */

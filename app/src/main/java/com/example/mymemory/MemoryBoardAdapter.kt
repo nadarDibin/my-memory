@@ -9,6 +9,7 @@ import android.widget.ImageButton
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymemory.models.BoardSize
+import com.example.mymemory.models.MemoryCard
 import kotlin.math.min
 
 //    RecyclerView.Adapter<RecyclerView.ViewHolder>()
@@ -18,7 +19,8 @@ import kotlin.math.min
 class MemoryBoardAdapter(
     private val context: Context,
     private val boardSize: BoardSize,
-    private val cardImages: List<Int>
+    private val cards: List<MemoryCard>,
+    private val cardClickListener: CardClickListener
 ) :
 /**                                Using custom viewHolder*/
         RecyclerView.Adapter<MemoryBoardAdapter.ViewHolder>() {
@@ -28,6 +30,10 @@ class MemoryBoardAdapter(
         companion object {
             private const val MARGIN_SIZE = 10
             private const val TAG = "MemoryBoardAdapter"
+        }
+
+        interface CardClickListener {
+            fun onCardClicked(position: Int) // Why bother?
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -59,10 +65,16 @@ class MemoryBoardAdapter(
             private val imageButton = itemView.findViewById<ImageButton>(R.id.imageButton)
 
             fun bind(position: Int) {
-                imageButton.setImageResource(cardImages[position])
+                val memoryCard = cards[position]
+                imageButton.setImageResource(showCardFace(memoryCard))
                 imageButton.setOnClickListener {
+                    cardClickListener.onCardClicked(position)
                     Log.i(TAG, "Clicked on position: $position")
                 }
             }
+        }
+
+        fun showCardFace(card: MemoryCard): Int {
+            return if (card.isFaceUp) card.identifier else R.drawable.ic_launcher_background
         }
     }
