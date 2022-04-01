@@ -31,9 +31,8 @@
                 android:layout_height="match_parent"
                 android:gravity="center_horizontal"
                 android:padding="8dp"
-                android:text="TextView"
-                android:textSize="20sp"
-                tools:text="Moves 0" />
+                android:text="Moves 0"
+                android:textSize="20sp" />
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
