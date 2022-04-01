@@ -15,7 +15,11 @@ import kotlin.math.min
 // MBA Class is a Sub-class of RV Adapter Class, parameterised by RV.VH
 // VH is an Object that provides access to all the views of 1 RV element(1 Memory Piece in the Game)
 
-class MemoryBoardAdapter(private val context: Context, private val boardSize: BoardSize) :
+class MemoryBoardAdapter(
+    private val context: Context,
+    private val boardSize: BoardSize,
+    private val cardImages: List<Int>
+) :
 /**                                Using custom viewHolder*/
         RecyclerView.Adapter<MemoryBoardAdapter.ViewHolder>() {
 
@@ -55,6 +59,7 @@ class MemoryBoardAdapter(private val context: Context, private val boardSize: Bo
             private val imageButton = itemView.findViewById<ImageButton>(R.id.imageButton)
 
             fun bind(position: Int) {
+                imageButton.setImageResource(cardImages[position])
                 imageButton.setOnClickListener {
                     Log.i(TAG, "Clicked on position: $position")
                 }

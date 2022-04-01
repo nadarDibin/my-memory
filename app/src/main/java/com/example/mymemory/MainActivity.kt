@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymemory.models.BoardSize
+import com.example.mymemory.utils.DEFAULT_ICONS
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,7 +25,10 @@ class MainActivity : AppCompatActivity() {
         tvNumMoves = findViewById(R.id.tvNumberOfMoves)
         tvNumPairs = findViewById(R.id.tvNumberOfPairs)
 
-        rvBoard.adapter = MemoryBoardAdapter(this, boardSize)
+        val chosenImages = DEFAULT_ICONS.shuffled().take(boardSize.getNumPairs())
+        val randomizedImages = (chosenImages + chosenImages).shuffled()
+
+        rvBoard.adapter = MemoryBoardAdapter(this, boardSize, randomizedImages)
         rvBoard.setHasFixedSize(true) // Optimisation
         rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
         /**                                What is context exactly?  */
