@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var rvBoard: RecyclerView /** lateinit because the values are set in the onCreate() and not when the class is constructed */
+    /** lateinit because the values are set in the onCreate() and not when the class is constructed */
+    private lateinit var rvBoard: RecyclerView
     private lateinit var tvNumMoves: TextView
     private lateinit var tvNumPairs: TextView
 
@@ -15,6 +16,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        binding
+        rvBoard = findViewById(R.id.rvBoard)
+        tvNumMoves = findViewById(R.id.tvNumberOfMoves)
+        tvNumPairs = findViewById(R.id.tvNumberOfPairs)
     }
 }
