@@ -6,6 +6,7 @@ class MemoryGame(private val gameGameBoard: GameBoard) {
 
     val cards: List<MemoryCard>
     var numPairsFound = 0
+    private var numMoves = 0
     private var unmatchedFaceUpCardPosition: Int? = null // TODO: Better Name
 
     init {
@@ -15,6 +16,7 @@ class MemoryGame(private val gameGameBoard: GameBoard) {
     }
 
     fun makeMove(position: Int): Boolean {
+        numMoves++
         val card = cards[position]
         var isPair = false
 
@@ -28,7 +30,7 @@ class MemoryGame(private val gameGameBoard: GameBoard) {
         }
 
         flipCard(card)
-        return isPair
+        return isPair // TODO: () name misleading
     }
 
     private fun checkIfPair(position1: Int, position2: Int): Boolean {
@@ -57,5 +59,9 @@ class MemoryGame(private val gameGameBoard: GameBoard) {
 
     fun isCardFaceUp(position: Int): Boolean {
         return cards[position].isFaceUp
+    }
+
+    fun getNumMoves(): Int {
+        return numMoves / 2
     }
 }

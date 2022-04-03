@@ -1,9 +1,11 @@
 package com.example.mymemory
 
+import android.animation.ArgbEvaluator
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymemory.models.GameBoard
@@ -11,10 +13,6 @@ import com.example.mymemory.models.MemoryGame
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
-
-    companion object {
-        private const val TAG = "Main Activity"
-    }
 
     /** lateinit because the values are set in the onCreate() and not when the class is constructed */
     private lateinit var rvBoard: RecyclerView
@@ -25,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var memoryGame: MemoryGame
     private lateinit var adapter: MemoryBoardAdapter
 
-    private val gameBoard: GameBoard = GameBoard.HARD
+    private val gameBoard: GameBoard = GameBoard.EASY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         clRoot = findViewById(R.id.clRoot)
         tvNumMoves = findViewById(R.id.tvNumberOfMoves)
         tvNumPairs = findViewById(R.id.tvNumberOfPairs)
+        tvNumPairs.setTextColor(ContextCompat.getColor(this, R.color.color_progress_none))
 
         memoryGame = MemoryGame(gameBoard)
 
@@ -67,9 +66,24 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(clRoot, "Invalid move!", Snackbar.LENGTH_SHORT).show()
             return
         }
-        memoryGame.makeMove(position)
+        if (memoryGame.makeMove(position)) {
+            updateGameProgress()
+
+            tvNumPairs.text = "Pairs: ${memoryGame.numPairsFound}/${gameBoard.getNumPairs()}"
+        }
+        tvNumMoves.text = "Moves: ${memoryGame.getNumMoves()}"
+
         /** IMPORTANT */
-        adapter.notifyDataSetChanged()
+        adapter.notifyItemRangeChanged(0, memoryGame.cards.size, memoryGame)
+    }
+
+    private fun updateGameProgress() {
+        val progressColour = ArgbEvaluator().evaluate(
+            memoryGame.numPairsFound.toFloat() / gameBoard.getNumPairs(),
+            ContextCompat.getColor(this, R.color.color_progress_none),
+            ContextCompat.getColor(this, R.color.color_progress_full)
+        ) as Int
+        tvNumPairs.setTextColor(progressColour)
     }
 
     private fun restartGame() {
