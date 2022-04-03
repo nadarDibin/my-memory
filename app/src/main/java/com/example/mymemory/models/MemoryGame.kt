@@ -61,7 +61,7 @@ class MemoryGame(private val gameGameBoard: GameBoard) {
         return cards[position].isFaceUp
     }
 
-    fun getNumMoves(): Int {
+    fun getGameMoves(): Int {
         return numMoves / 2
     }
 }
