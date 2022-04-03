@@ -12,7 +12,7 @@
         android:id="@+id/llGameInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSecondaryVariant"
+        android:background="@color/color_launcher_background"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
