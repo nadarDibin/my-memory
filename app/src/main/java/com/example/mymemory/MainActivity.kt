@@ -1,13 +1,14 @@
 package com.example.mymemory
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mymemory.models.BoardSize
+import com.example.mymemory.models.GameBoard
 import com.example.mymemory.models.MemoryGame
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,35 +18,65 @@ class MainActivity : AppCompatActivity() {
 
     /** lateinit because the values are set in the onCreate() and not when the class is constructed */
     private lateinit var rvBoard: RecyclerView
+    private lateinit var clRoot: ConstraintLayout
     private lateinit var tvNumMoves: TextView
     private lateinit var tvNumPairs: TextView
 
-    private val boardSize: BoardSize = BoardSize.HARD
+    private lateinit var memoryGame: MemoryGame
+    private lateinit var adapter: MemoryBoardAdapter
+
+    private val gameBoard: GameBoard = GameBoard.HARD
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         rvBoard = findViewById(R.id.rvBoard)
+        clRoot = findViewById(R.id.clRoot)
         tvNumMoves = findViewById(R.id.tvNumberOfMoves)
         tvNumPairs = findViewById(R.id.tvNumberOfPairs)
 
-        val memoryGame = MemoryGame(boardSize)
+        memoryGame = MemoryGame(gameBoard)
 
-        rvBoard.adapter = MemoryBoardAdapter(
+        adapter = MemoryBoardAdapter(
             this,
-            boardSize,
+            gameBoard,
             memoryGame.cards,
             object : MemoryBoardAdapter.CardClickListener {
                 /** Creating an anonymous class of CardClickListener */
                 override fun onCardClicked(position: Int) {
-                    Log.i(TAG, "Card clicked $position")
+                    updateGameWithFlip(position)
                 }
             }
         )
+        rvBoard.adapter = adapter
         rvBoard.setHasFixedSize(true) // Optimisation
-        rvBoard.layoutManager = GridLayoutManager(this, boardSize.getWidth())
+        rvBoard.layoutManager = GridLayoutManager(this, gameBoard.getWidth())
         /**                                What is context exactly?  */
+    }
+
+    private fun updateGameWithFlip(position: Int) {
+        if (memoryGame.hasWonGame()) {
+            val message =
+                Snackbar.make(clRoot, "Congratulations! You Won!", Snackbar.LENGTH_LONG)
+            message.setAction("Play Again?") { restartGame() }
+            message.show()
+            return
+        }
+        if (memoryGame.isCardFaceUp(position)) {
+            Snackbar.make(clRoot, "Invalid move!", Snackbar.LENGTH_SHORT).show()
+            return
+        }
+        memoryGame.makeMove(position)
+        /** IMPORTANT */
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun restartGame() {
+        /**  What is intent?*/
+        val intent = intent
+        finish()
+        startActivity(intent)
     }
 
     /**  RecyclerView has 2 components

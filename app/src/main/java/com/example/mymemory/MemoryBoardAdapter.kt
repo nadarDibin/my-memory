@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mymemory.models.BoardSize
+import com.example.mymemory.models.GameBoard
 import com.example.mymemory.models.MemoryCard
 import kotlin.math.min
 
@@ -18,7 +20,7 @@ import kotlin.math.min
 
 class MemoryBoardAdapter(
     private val context: Context,
-    private val boardSize: BoardSize,
+    private val gameBoard: GameBoard,
     private val cards: List<MemoryCard>,
     private val cardClickListener: CardClickListener
 ) :
@@ -37,8 +39,8 @@ class MemoryBoardAdapter(
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val cardWidth = parent.width / boardSize.getWidth() - (2 * MARGIN_SIZE)
-            val cardHeight = parent.height / boardSize.getHeight() - (2 * MARGIN_SIZE)
+            val cardWidth = parent.width / gameBoard.getWidth() - (2 * MARGIN_SIZE)
+            val cardHeight = parent.height / gameBoard.getHeight() - (2 * MARGIN_SIZE)
             val cardSideLength = min(cardHeight, cardWidth)
             val view = LayoutInflater.from(context).inflate(
                 R.layout.memory_card,
@@ -55,7 +57,7 @@ class MemoryBoardAdapter(
             return ViewHolder(view)
         }
 
-        override fun getItemCount(): Int = this.boardSize.numCards
+        override fun getItemCount(): Int = this.gameBoard.numCards
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             holder.bind(position)
@@ -67,6 +69,9 @@ class MemoryBoardAdapter(
             fun bind(position: Int) {
                 val memoryCard = cards[position]
                 imageButton.setImageResource(showCardFace(memoryCard))
+
+                greyOutPair(imageButton, memoryCard)
+
                 imageButton.setOnClickListener {
                     cardClickListener.onCardClicked(position)
                     Log.i(TAG, "Clicked on position: $position")
@@ -76,5 +81,14 @@ class MemoryBoardAdapter(
 
         fun showCardFace(card: MemoryCard): Int {
             return if (card.isFaceUp) card.identifier else R.drawable.ic_launcher_background
+        }
+
+        fun greyOutPair(imageButton: ImageButton, memoryCard: MemoryCard) {
+            imageButton.alpha = if (memoryCard.isMatched) .4f else 1.0f
+            val colourStateLess = if (memoryCard.isMatched) ContextCompat.getColorStateList(
+                context,
+                R.color.color_gray
+            ) else null
+            ViewCompat.setBackgroundTintList(imageButton, colourStateLess)
         }
     }

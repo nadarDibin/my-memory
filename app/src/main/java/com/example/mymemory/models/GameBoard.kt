@@ -1,6 +1,6 @@
 package com.example.mymemory.models
 
-enum class BoardSize(val numCards: Int) {
+enum class GameBoard(val numCards: Int) {
     EASY(8),
     MEDIUM(18),
     HARD(24);
