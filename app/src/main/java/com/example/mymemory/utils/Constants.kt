@@ -2,6 +2,8 @@ package com.example.mymemory.utils
 
 import com.example.mymemory.R
 
+const val CUSTOM_BOARD_SIZE = "CUSTOM_BOARD_SIZE"
+
 val DEFAULT_ICONS = listOf(
     R.drawable.ic_boil_alive,
     R.drawable.ic_cake,

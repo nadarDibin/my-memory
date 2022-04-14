@@ -1,6 +1,7 @@
 package com.example.mymemory
 
 import android.animation.ArgbEvaluator
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -16,9 +17,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymemory.models.GameBoard
 import com.example.mymemory.models.MemoryGame
+import com.example.mymemory.utils.CUSTOM_BOARD_SIZE
+import com.example.mymemory.utils.CreateActivity
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private const val CREATE_REQUEST_CODE = 1084 // Significance?
+    }
 
     /** lateinit because the values are set in the onCreate() and not when the class is constructed */
     private lateinit var rvBoard: RecyclerView
@@ -58,8 +65,33 @@ class MainActivity : AppCompatActivity() {
                 showNewSizeDialog()
                 return true
             }
+            R.id.mi_custom -> {
+                showCreationDialog()
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun showCreationDialog() {
+        val boardSizeView = LayoutInflater.from(this).inflate(R.layout.dialog_board_size, null)
+        val radioGroupSize = boardSizeView.findViewById<RadioGroup>(R.id.radioDifficulty)
+
+        showAlertDialog(
+            "Create your own board", boardSizeView
+        ) {
+            // set a new val for board size
+            val customBoardSize = when (radioGroupSize.checkedRadioButtonId) {
+                R.id.rbEasy -> GameBoard.EASY
+                R.id.rbMedium -> GameBoard.MEDIUM
+                else -> GameBoard.HARD
+            }
+            // navigate to new activity
+            val intent = Intent(this, CreateActivity::class.java)
+            intent.putExtra(CUSTOM_BOARD_SIZE, customBoardSize)
+            startActivityForResult(intent, CREATE_REQUEST_CODE)
+            setupBoard()
+        }
     }
 
     private fun showNewSizeDialog() {
