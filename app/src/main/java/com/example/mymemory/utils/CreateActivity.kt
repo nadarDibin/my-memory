@@ -3,8 +3,14 @@ package com.example.mymemory.utils
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -17,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mymemory.ImagePickerAdapter
 import com.example.mymemory.R
 import com.example.mymemory.models.GameBoard
+import java.io.ByteArrayOutputStream
 
 class CreateActivity : AppCompatActivity() {
 
@@ -25,6 +32,7 @@ class CreateActivity : AppCompatActivity() {
         private const val PICK_PHOTO_CODE = 1123 // use Enums maybe, do better
         private const val READ_EXTERNAL_PHOTOS_CODE = 4801
         private const val READ_PHOTOS_PERMISSION = android.Manifest.permission.READ_EXTERNAL_STORAGE
+        private const val MAX_GAME_NAME_LENGTH = 14
     }
 
     private lateinit var rvImagePicker: RecyclerView
@@ -49,6 +57,21 @@ class CreateActivity : AppCompatActivity() {
         board = intent.getSerializableExtra(CUSTOM_BOARD_SIZE) as GameBoard
         numImagesRequired = board.getNumPairs()
         supportActionBar?.title = "Images selected (0/$numImagesRequired)"
+
+        btnSave.setOnClickListener {
+            saveDataToFirebase()
+        }
+
+        setGameNameLength()
+        etGameName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun afterTextChanged(p0: Editable?) {
+                btnSave.isEnabled = shouldEnableSaveButton()
+            }
+        })
 
         adapter = ImagePickerAdapter(
             this,
@@ -135,6 +158,28 @@ class CreateActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
         supportActionBar?.title = "Images selected (${chosenImageUris.size}/$numImagesRequired)"
         btnSave.isEnabled = shouldEnableSaveButton()
+    }
+
+    private fun saveDataToFirebase() {
+        for ((index, photoUri) in chosenImageUris.withIndex()) {
+            val imageByteArray = getImageByteArray(photoUri)
+        }
+    }
+
+    private fun getImageByteArray(photoUri: Uri): ByteArray {
+        // is this needed?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val source = ImageDecoder.createSource(contentResolver, photoUri)
+            ImageDecoder.decodeBitmap(source)
+        } else {
+            MediaStore.Images.Media.getBitmap(contentResolver, photoUri)
+        }
+
+        return ByteArrayOutputStream().toByteArray()
+    }
+
+    private fun setGameNameLength() {
+        etGameName.filters = arrayOf(InputFilter.LengthFilter(MAX_GAME_NAME_LENGTH))
     }
 
     private fun shouldEnableSaveButton(): Boolean {
