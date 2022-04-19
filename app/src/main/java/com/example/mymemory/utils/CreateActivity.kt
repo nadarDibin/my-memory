@@ -3,6 +3,7 @@ package com.example.mymemory.utils
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -23,6 +24,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mymemory.ImagePickerAdapter
 import com.example.mymemory.R
 import com.example.mymemory.models.GameBoard
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 
 class CreateActivity : AppCompatActivity() {
@@ -44,6 +48,9 @@ class CreateActivity : AppCompatActivity() {
     private var numImagesRequired = -1
     private val chosenImageUris = mutableListOf<Uri>()
 
+    private val storage = Firebase.storage
+    private val db = Firebase.firestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create)
@@ -58,6 +65,7 @@ class CreateActivity : AppCompatActivity() {
         numImagesRequired = board.getNumPairs()
         supportActionBar?.title = "Images selected (0/$numImagesRequired)"
 
+        // TODO do not allow multiple clicks, after one click, maybe redirect on success?
         btnSave.setOnClickListener {
             saveDataToFirebase()
         }
@@ -161,21 +169,55 @@ class CreateActivity : AppCompatActivity() {
     }
 
     private fun saveDataToFirebase() {
+        val gameName = etGameName.text.toString()
+        val uploadedImageUrls = mutableListOf<String>()
         for ((index, photoUri) in chosenImageUris.withIndex()) {
-            val imageByteArray = getImageByteArray(photoUri)
+            val imageByteArray = getImageByteArray(photoUri) // actual image data
+            val filePath = "game_images/$gameName/${System.currentTimeMillis()}-$index.jpg"
+            val photoLocationReference = storage.reference.child(filePath)
+            var didEncounterError = false
+
+            /** uploads data to firebase (Expensive) */
+            photoLocationReference.putBytes(imageByteArray)
+                .continueWithTask { photoUploadTask -> // photoUploadTask is the result of putBytes
+                    Log.i(TAG, "Uploaded bytes: ${photoUploadTask.result?.bytesTransferred}")
+                    photoLocationReference.downloadUrl // if the Second task
+                }.addOnCompleteListener { downloadUrlTask -> // downloadUrlTask is from .downloadUrl
+                    if (didEncounterError) return@addOnCompleteListener // for any earlier image
+                    if (!downloadUrlTask.isSuccessful) {
+                        Log.e(TAG, "Exception with Firebase Storage", downloadUrlTask.exception)
+                        Toast.makeText(this, "Failed to upload image!", Toast.LENGTH_SHORT).show()
+                        didEncounterError = true // for this image
+                        return@addOnCompleteListener
+                    }
+                    val downloadUrl = downloadUrlTask.result.toString()
+                    uploadedImageUrls.add(downloadUrl)
+                    Log.i(
+                        TAG,
+                        "Finished uploading (${uploadedImageUrls.size}/${chosenImageUris.size}) images"
+                    )
+                    if (uploadedImageUrls.size == chosenImageUris.size) {
+                        handleAllImagesUploaded(gameName, uploadedImageUrls)
+                    }
+                }
         }
+    }
+
+    private fun handleAllImagesUploaded(gameName: String, imageUrls: MutableList<String>) {
     }
 
     private fun getImageByteArray(photoUri: Uri): ByteArray {
         // is this needed?
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val source = ImageDecoder.createSource(contentResolver, photoUri)
             ImageDecoder.decodeBitmap(source)
         } else {
             MediaStore.Images.Media.getBitmap(contentResolver, photoUri)
         }
 
-        return ByteArrayOutputStream().toByteArray()
+        val byteOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteOutputStream)
+        return byteOutputStream.toByteArray()
     }
 
     private fun setGameNameLength() {
