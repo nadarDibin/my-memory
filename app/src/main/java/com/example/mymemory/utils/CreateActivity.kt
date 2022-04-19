@@ -25,6 +25,7 @@ import com.example.mymemory.R
 import com.example.mymemory.models.GameBoard
 import java.io.ByteArrayOutputStream
 
+
 class CreateActivity : AppCompatActivity() {
 
     companion object {
@@ -184,9 +185,11 @@ class CreateActivity : AppCompatActivity() {
 
     private fun shouldEnableSaveButton(): Boolean {
         if (chosenImageUris.size != numImagesRequired) return false
-        if (R.id.etGameName.equals(null)) return false
+        if (isTextEmpty()) return false
         return true
     }
+
+    private fun isTextEmpty() = etGameName.text.toString().isEmpty()
 
     private fun launchIntentForPhotos() {
         val intent = Intent(Intent.ACTION_PICK)
