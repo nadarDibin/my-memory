@@ -25,7 +25,6 @@ import com.example.mymemory.R
 import com.example.mymemory.models.GameBoard
 import java.io.ByteArrayOutputStream
 
-
 class CreateActivity : AppCompatActivity() {
 
     companion object {
