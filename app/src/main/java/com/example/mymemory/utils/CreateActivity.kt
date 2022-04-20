@@ -1,6 +1,7 @@
 package com.example.mymemory.utils
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -137,7 +138,7 @@ class CreateActivity : AppCompatActivity() {
                     this,
                     "To create a custom game please provide access to your photos",
                     Toast.LENGTH_SHORT
-                )
+                ).show()
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -204,6 +205,30 @@ class CreateActivity : AppCompatActivity() {
     }
 
     private fun handleAllImagesUploaded(gameName: String, imageUrls: MutableList<String>) {
+        // TODO we will be needing a loader too
+
+        // Firestore has data in documents which has it in collection, 1 document is an entity
+        db.collection("games").document(gameName)
+            .set(mapOf("images" to imageUrls))
+            .addOnCompleteListener { gameCreationTask ->
+                if (!gameCreationTask.isSuccessful) {
+                    Log.e(TAG, "Exception in game creation", gameCreationTask.exception)
+                    Toast.makeText(this, "Game creation failed", Toast.LENGTH_SHORT).show()
+                    return@addOnCompleteListener
+                }
+                Log.i(TAG, "Successfully created the game: $gameName")
+                AlertDialog.Builder(this)
+                    .setTitle("Upload complete! Play '$gameName'?")
+                    .setPositiveButton("Yes!") { _, _ ->
+                        val resultData = Intent()
+                        resultData.putExtra(CUSTOM_GAME_NAME, gameName)
+                        setResult(Activity.RESULT_OK, resultData)
+                        finish()
+                    }
+                    .setNegativeButton("No") { _, _ ->
+                        // TODO implement no to take you back to the default game
+                    }.show()
+            }
     }
 
     private fun getImageByteArray(photoUri: Uri): ByteArray {

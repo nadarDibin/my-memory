@@ -2,6 +2,7 @@ package com.example.mymemory.utils
 
 import com.example.mymemory.R
 
+const val CUSTOM_GAME_NAME = "CUSTOM_BOARD_NAME"
 const val CUSTOM_BOARD_SIZE = "CUSTOM_BOARD_SIZE"
 
 val DEFAULT_ICONS = listOf(
