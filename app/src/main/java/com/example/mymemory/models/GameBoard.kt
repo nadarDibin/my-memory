@@ -5,6 +5,10 @@ enum class GameBoard(val numCards: Int) {
     MEDIUM(18),
     HARD(24);
 
+    companion object {
+        fun getSizeByValue(value: Int) = values().first() { it.numCards == value }
+    }
+
     fun getWidth(): Int {
         return when (this) {
             EASY -> 2

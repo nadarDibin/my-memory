@@ -237,7 +237,6 @@ class CreateActivity : AppCompatActivity() {
     }
 
     private fun handleAllImagesUploaded(gameName: String, imageUrls: MutableList<String>) {
-        // TODO we will be needing a loader too
 
         // Firestore has data in documents which has it in collection, 1 document is an entity
         db.collection("games").document(gameName)
@@ -260,7 +259,8 @@ class CreateActivity : AppCompatActivity() {
                     }
                     .setNegativeButton("No") { _, _ ->
                         // TODO implement no to take you back to the default game
-                    }.show()
+                    }
+                    .show()
             }
     }
 

@@ -2,7 +2,7 @@ package com.example.mymemory.models
 
 import com.example.mymemory.utils.DEFAULT_ICONS
 
-class MemoryGame(private val gameGameBoard: GameBoard) {
+class MemoryGame(private val gameGameBoard: GameBoard, private val customImages: List<String>?) {
 
     val cards: List<MemoryCard>
     var numPairsFound = 0
@@ -10,9 +10,15 @@ class MemoryGame(private val gameGameBoard: GameBoard) {
     private var unmatchedFaceUpCardPosition: Int? = null // TODO: Better Name
 
     init {
-        val chosenImages = DEFAULT_ICONS.shuffled().take(gameGameBoard.getNumPairs())
-        val randomizedImages = (chosenImages + chosenImages).shuffled()
-        cards = randomizedImages.map { MemoryCard(it) }
+// TODO refactor
+        if (customImages == null) {
+            val chosenImages = DEFAULT_ICONS.shuffled().take(gameGameBoard.getNumPairs())
+            val randomizedImages = (chosenImages + chosenImages).shuffled()
+            cards = randomizedImages.map { MemoryCard(it) }
+        } else {
+            val randomizedImages = (customImages + customImages).shuffled()
+            cards = randomizedImages.map { MemoryCard(it.hashCode(), it) }
+        }
     }
 
     fun makeMove(position: Int): Boolean {

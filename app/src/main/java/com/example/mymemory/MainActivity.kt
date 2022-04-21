@@ -1,8 +1,10 @@
 package com.example.mymemory
 
 import android.animation.ArgbEvaluator
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -17,14 +19,20 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymemory.models.GameBoard
 import com.example.mymemory.models.MemoryGame
+import com.example.mymemory.models.UserImageList
 import com.example.mymemory.utils.CUSTOM_BOARD_SIZE
+import com.example.mymemory.utils.CUSTOM_GAME_NAME
 import com.example.mymemory.utils.CreateActivity
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.squareup.picasso.Picasso
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val CREATE_REQUEST_CODE = 1084 // Significance?
+        private const val TAG = "MainActivity"
     }
 
     /** lateinit because the values are set in the onCreate() and not when the class is constructed */
@@ -36,6 +44,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var memoryGame: MemoryGame
     private lateinit var adapter: MemoryBoardAdapter
 
+    private val db = Firebase.firestore
+    private var gameName: String? = null
+    private var customGameImages: List<String>? = null
     private var gameBoard: GameBoard = GameBoard.EASY
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +84,46 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == CREATE_REQUEST_CODE && requestCode == Activity.RESULT_OK) {
+            val customGameName = data?.getStringExtra(CUSTOM_GAME_NAME)
+            if (customGameName == null) {
+                Log.e(TAG, "Got null for custom game name in CreateActivity")
+                return
+            }
+            downloadGame(customGameName)
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun downloadGame(customGameName: String) {
+        db.collection("games").document(customGameName).get().addOnSuccessListener { document ->
+            // we turn the document into a kotlin data class here using firestore
+            val userImageList = document.toObject(UserImageList::class.java)
+            if (userImageList?.images == null) {
+                Log.e(TAG, "Invalid game data from Firestore")
+                Snackbar.make(
+                    clRoot,
+                    "Sorry, game data for '$customGameName' not found",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                return@addOnSuccessListener
+            }
+
+            val numCards = userImageList.images.size * 2
+            gameBoard = GameBoard.getSizeByValue(numCards)
+            customGameImages = userImageList.images
+            gameName = customGameName
+            // Pre-fetch the images for faster loading
+//            for (imageUrl in userImageList.images) {
+//                Picasso.get().load(imageUrl).fetch()
+//            }
+            setupBoard()
+        }.addOnFailureListener { exception ->
+            Log.e(TAG, "Exception while downloading custom game", exception)
+        }
+    }
+
     private fun showCreationDialog() {
         val boardSizeView = LayoutInflater.from(this).inflate(R.layout.dialog_board_size, null)
         val radioGroupSize = boardSizeView.findViewById<RadioGroup>(R.id.radioDifficulty)
@@ -90,7 +141,6 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, CreateActivity::class.java)
             intent.putExtra(CUSTOM_BOARD_SIZE, customBoardSize)
             startActivityForResult(intent, CREATE_REQUEST_CODE)
-            setupBoard()
         }
     }
 
@@ -110,6 +160,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.rbMedium -> GameBoard.MEDIUM
                 else -> GameBoard.HARD
             }
+            // method to refresh data
+            gameName = null
+            customGameImages = null
             setupBoard()
         }
     }
@@ -161,8 +214,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBoard() {
 
+        supportActionBar?.title = gameName ?: getString(R.string.app_name)
+
         tvNumPairs.setTextColor(ContextCompat.getColor(this, R.color.color_progress_none))
-        memoryGame = MemoryGame(gameBoard)
+        memoryGame = MemoryGame(gameBoard, customGameImages)
         adapter = MemoryBoardAdapter(
             this,
             gameBoard,

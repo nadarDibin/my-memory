@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymemory.models.GameBoard
 import com.example.mymemory.models.MemoryCard
+import com.squareup.picasso.Picasso
 import kotlin.math.min
 
 //    RecyclerView.Adapter<RecyclerView.ViewHolder>()
@@ -68,7 +69,16 @@ class MemoryBoardAdapter(
 
             fun bind(position: Int) {
                 val memoryCard = cards[position]
-                imageButton.setImageResource(showCardFace(memoryCard))
+// TODO Refactor, remove if else ladder
+                if (memoryCard.isFaceUp) {
+                    if (memoryCard.imageUrl != null) {// TODO check ic_launcher_background
+                        Picasso.get().load(memoryCard.imageUrl).placeholder(R.drawable.ic_launcher_background).into(imageButton)
+                    } else {
+                        imageButton.setImageResource(memoryCard.identifier)
+                    }
+                } else {
+                    imageButton.setImageResource(R.drawable.ic_launcher_background)
+                }
 
                 greyOutPair(imageButton, memoryCard)
 
