@@ -173,7 +173,7 @@ class CreateActivity : AppCompatActivity() {
     }
 
     private fun saveDataToFirebase() {
-        Log.i(TAG, "saveDataToFirebase")
+        Log.i(TAG, "Save data to firebase")
         btnSave.isEnabled = false
         val gameName = etGameName.text.toString()
 
@@ -265,16 +265,17 @@ class CreateActivity : AppCompatActivity() {
     }
 
     private fun getImageByteArray(photoUri: Uri): ByteArray {
-        // is this needed?
-        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        val originalBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val source = ImageDecoder.createSource(contentResolver, photoUri)
             ImageDecoder.decodeBitmap(source)
         } else {
             MediaStore.Images.Media.getBitmap(contentResolver, photoUri)
         }
 
+        var scaledBitmap = BitmapScaler.scaleToFitHeight(originalBitmap, 150)
+        scaledBitmap = BitmapScaler.scaleToFitWidth(scaledBitmap, 150)
         val byteOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteOutputStream)
+        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteOutputStream)
         return byteOutputStream.toByteArray()
     }
 
