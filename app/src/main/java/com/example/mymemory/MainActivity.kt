@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -80,6 +81,10 @@ class MainActivity : AppCompatActivity() {
                 showCreationDialog()
                 return true
             }
+            R.id.mi_download -> {
+                showDownloadDialog()
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -94,6 +99,18 @@ class MainActivity : AppCompatActivity() {
             downloadGame(customGameName)
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun showDownloadDialog() {
+        val downloadGameView =
+            LayoutInflater.from(this).inflate(R.layout.dialog_download_game, null)
+        showAlertDialog(
+            "Download memory game", downloadGameView
+        ) {
+            val etDownloadGame = downloadGameView.findViewById<EditText>(R.id.etDownloadGame)
+            val gameToDownload = etDownloadGame.text.toString().trim()
+            downloadGame(gameToDownload)
+        }
     }
 
     private fun downloadGame(customGameName: String) {
@@ -119,6 +136,8 @@ class MainActivity : AppCompatActivity() {
             for (imageUrl in userImageList.images) {
                 Picasso.get().load(imageUrl).fetch()
             }
+            Snackbar.make(clRoot, "You are now playing '$customGameName'!", Snackbar.LENGTH_SHORT)
+                .show()
             setupBoard()
         }.addOnFailureListener { exception ->
             Log.e(TAG, "Exception while downloading custom game", exception)

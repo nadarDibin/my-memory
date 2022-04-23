@@ -73,7 +73,7 @@ class MemoryBoardAdapter(
                 if (memoryCard.isFaceUp) {
                     if (memoryCard.imageUrl != null) { // TODO check ic_launcher_background
                         Picasso.get().load(memoryCard.imageUrl)
-                            .placeholder(R.drawable.ic_launcher_background).into(imageButton)
+                            .placeholder(R.drawable.ic_loading_image).into(imageButton)
                     } else {
                         imageButton.setImageResource(memoryCard.identifier)
                     }

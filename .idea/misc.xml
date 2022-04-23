@@ -5,19 +5,21 @@
             <map>
                 <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml"
                     value="0.3215" />
+                <entry key="app/src/main/res/drawable/ic_baseline_image_24.xml" value="0.1" />
                 <entry key="app/src/main/res/drawable/ic_boil_alive.xml" value="0.325" />
                 <entry key="app/src/main/res/drawable/ic_face.xml" value="0.359" />
                 <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.346" />
-                <entry key="app/src/main/res/layout/activity_create.xml"
-                    value="0.3302083333333333" />
+                <entry key="app/src/main/res/drawable/ic_loading_image.xml" value="0.1" />
+                <entry key="app/src/main/res/layout/activity_create.xml" value="0.1" />
                 <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
                 <entry key="app/src/main/res/layout/card_image.xml" value="0.3302083333333333" />
                 <entry key="app/src/main/res/layout/dialog_board_size.xml"
                     value="0.41510416666666666" />
+                <entry key="app/src/main/res/layout/dialog_download_game.xml" value="0.1" />
                 <entry key="app/src/main/res/layout/memory_card.xml" value="0.1" />
                 <entry key="app/src/main/res/menu/menu_activity_create.xml"
                     value="0.34479166666666666" />
-                <entry key="app/src/main/res/menu/menu_main.xml" value="0.41510416666666666" />
+                <entry key="app/src/main/res/menu/menu_main.xml" value="0.29907407407407405" />
                 <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.236" />
             </map>
         </option>
