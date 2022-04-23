@@ -71,8 +71,9 @@ class MemoryBoardAdapter(
                 val memoryCard = cards[position]
 // TODO Refactor, remove if else ladder
                 if (memoryCard.isFaceUp) {
-                    if (memoryCard.imageUrl != null) {// TODO check ic_launcher_background
-                        Picasso.get().load(memoryCard.imageUrl).placeholder(R.drawable.ic_launcher_background).into(imageButton)
+                    if (memoryCard.imageUrl != null) { // TODO check ic_launcher_background
+                        Picasso.get().load(memoryCard.imageUrl)
+                            .placeholder(R.drawable.ic_launcher_background).into(imageButton)
                     } else {
                         imageButton.setImageResource(memoryCard.identifier)
                     }

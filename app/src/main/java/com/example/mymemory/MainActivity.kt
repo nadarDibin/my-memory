@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == CREATE_REQUEST_CODE && requestCode == Activity.RESULT_OK) {
+        if (requestCode == CREATE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val customGameName = data?.getStringExtra(CUSTOM_GAME_NAME)
             if (customGameName == null) {
                 Log.e(TAG, "Got null for custom game name in CreateActivity")
@@ -115,9 +115,10 @@ class MainActivity : AppCompatActivity() {
             customGameImages = userImageList.images
             gameName = customGameName
             // Pre-fetch the images for faster loading
-//            for (imageUrl in userImageList.images) {
-//                Picasso.get().load(imageUrl).fetch()
-//            }
+            // TODO cache images?
+            for (imageUrl in userImageList.images) {
+                Picasso.get().load(imageUrl).fetch()
+            }
             setupBoard()
         }.addOnFailureListener { exception ->
             Log.e(TAG, "Exception while downloading custom game", exception)
