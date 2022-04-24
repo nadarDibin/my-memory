@@ -3,6 +3,7 @@ package com.example.mymemory
 import android.animation.ArgbEvaluator
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,6 +25,7 @@ import com.example.mymemory.models.UserImageList
 import com.example.mymemory.utils.CUSTOM_BOARD_SIZE
 import com.example.mymemory.utils.CUSTOM_GAME_NAME
 import com.example.mymemory.utils.CreateActivity
+import com.github.jinatonic.confetti.CommonConfetti
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -202,8 +204,8 @@ class MainActivity : AppCompatActivity() {
     private fun updateGameWithFlip(position: Int) {
         if (memoryGame.hasWonGame()) {
             val message =
-                Snackbar.make(clRoot, "Congratulations! You Won!", Snackbar.LENGTH_LONG)
-            message.setAction("Play Again?") { setupBoard() }
+                Snackbar.make(clRoot, "Think you can do better?", Snackbar.LENGTH_LONG)
+            message.setAction("Play Again!") { setupBoard() }
             message.show()
             return
         }
@@ -230,6 +232,16 @@ class MainActivity : AppCompatActivity() {
             ContextCompat.getColor(this, R.color.color_progress_full)
         ) as Int
         tvNumPairs.setTextColor(progressColour)
+        if (memoryGame.hasWonGame()) {
+            val message =
+                Snackbar.make(clRoot, "Congratulations! You Won!", Snackbar.LENGTH_LONG)
+            message.show()
+            CommonConfetti.rainingConfetti(
+                clRoot,
+                intArrayOf(Color.BLUE, Color.GREEN, Color.MAGENTA, Color.RED)
+            ).oneShot()
+            return
+        }
     }
 
     private fun setupBoard() {

@@ -71,14 +71,14 @@ class MemoryBoardAdapter(
                 val memoryCard = cards[position]
 // TODO Refactor, remove if else ladder
                 if (memoryCard.isFaceUp) {
-                    if (memoryCard.imageUrl != null) { // TODO check ic_launcher_background
+                    if (memoryCard.imageUrl != null) {
                         Picasso.get().load(memoryCard.imageUrl)
                             .placeholder(R.drawable.ic_loading_image).into(imageButton)
                     } else {
                         imageButton.setImageResource(memoryCard.identifier)
                     }
                 } else {
-                    imageButton.setImageResource(R.drawable.ic_launcher_background)
+                    imageButton.setImageResource(R.drawable.ic_cover)
                 }
 
                 greyOutPair(imageButton, memoryCard)
@@ -91,7 +91,7 @@ class MemoryBoardAdapter(
         }
 
         fun showCardFace(card: MemoryCard): Int {
-            return if (card.isFaceUp) card.identifier else R.drawable.ic_launcher_background
+            return if (card.isFaceUp) card.identifier else R.drawable.ic_cover
         }
 
         fun greyOutPair(imageButton: ImageButton, memoryCard: MemoryCard) {

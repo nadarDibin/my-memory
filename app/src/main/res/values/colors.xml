@@ -11,4 +11,7 @@
     <color name="color_progress_full">#35BA01</color>
     <color name="color_progress_none">#DC1E0B</color>
     <color name="color_launcher_background">#3DDC84</color>
+    <color name="dark_green">#1E612A</color>
+    <color name="medium_green">#47E664</color>
+    <color name="light_green">#89E099</color>
 </resources>
