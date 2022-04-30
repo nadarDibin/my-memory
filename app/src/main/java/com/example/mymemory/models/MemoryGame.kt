@@ -2,23 +2,19 @@ package com.example.mymemory.models
 
 import com.example.mymemory.utils.DEFAULT_ICONS
 
-class MemoryGame(private val gameGameBoard: GameBoard, private val customImages: List<String>?) {
+class MemoryGame(private val gameGameBoard: GameBoard, customImages: List<String>?) {
 
-    val cards: List<MemoryCard>
     var numPairsFound = 0
     private var numMoves = 0
     private var unmatchedFaceUpCardPosition: Int? = null // TODO: Better Name
 
-    init {
-// TODO refactor
-        if (customImages == null) {
-            val chosenImages = DEFAULT_ICONS.shuffled().take(gameGameBoard.getNumPairs())
-            val randomizedImages = (chosenImages + chosenImages).shuffled()
-            cards = randomizedImages.map { MemoryCard(it) }
-        } else {
-            val randomizedImages = (customImages + customImages).shuffled()
-            cards = randomizedImages.map { MemoryCard(it.hashCode(), it) }
-        }
+    val cards: List<MemoryCard> = if (customImages == null) {
+        val chosenImages = DEFAULT_ICONS.shuffled().take(gameGameBoard.getNumPairs())
+        val randomizedImages = (chosenImages + chosenImages).shuffled()
+        randomizedImages.map { MemoryCard(it) }
+    } else {
+        val randomizedImages = (customImages + customImages).shuffled()
+        randomizedImages.map { MemoryCard(it.hashCode(), it) }
     }
 
     fun makeMove(position: Int): Boolean {
@@ -36,7 +32,7 @@ class MemoryGame(private val gameGameBoard: GameBoard, private val customImages:
         }
 
         flipCard(card)
-        return isPair // TODO: () name misleading
+        return isPair
     }
 
     private fun checkIfPair(position1: Int, position2: Int): Boolean {

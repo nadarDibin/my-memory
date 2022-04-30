@@ -133,8 +133,6 @@ class MainActivity : AppCompatActivity() {
             gameBoard = GameBoard.getSizeByValue(numCards)
             customGameImages = userImageList.images
             gameName = customGameName
-            // Pre-fetch the images for faster loading
-            // TODO cache images?
             for (imageUrl in userImageList.images) {
                 Picasso.get().load(imageUrl).fetch()
             }
