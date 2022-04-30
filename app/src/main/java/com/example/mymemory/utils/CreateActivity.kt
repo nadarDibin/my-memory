@@ -258,7 +258,9 @@ class CreateActivity : AppCompatActivity() {
                         finish()
                     }
                     .setNegativeButton("No") { _, _ ->
-                        // TODO implement no to take you back to the default game
+                        val resultData = Intent()
+                        setResult(Activity.RESULT_OK, resultData)
+                        finish()
                     }
                     .show()
             }
