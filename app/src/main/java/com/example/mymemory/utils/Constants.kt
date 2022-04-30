@@ -4,6 +4,7 @@ import com.example.mymemory.R
 
 const val CUSTOM_GAME_NAME = "CUSTOM_BOARD_NAME"
 const val CUSTOM_BOARD_SIZE = "CUSTOM_BOARD_SIZE"
+const val MAX_GAME_NAME_LENGTH = 14
 
 val DEFAULT_ICONS = listOf(
     R.drawable.ic_boil_alive,

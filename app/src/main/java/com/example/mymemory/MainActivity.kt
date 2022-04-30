@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mymemory.models.GameBoard
 import com.example.mymemory.models.MemoryGame
 import com.example.mymemory.models.UserImageList
+import com.example.mymemory.utils.AccessCodeEnum.CREATE_REQUEST
 import com.example.mymemory.utils.CUSTOM_BOARD_SIZE
 import com.example.mymemory.utils.CUSTOM_GAME_NAME
 import com.example.mymemory.utils.CreateActivity
@@ -34,7 +35,6 @@ import com.squareup.picasso.Picasso
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private const val CREATE_REQUEST_CODE = 1084 // Significance?
         private const val TAG = "MainActivity"
     }
 
@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == CREATE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == CREATE_REQUEST.code && resultCode == Activity.RESULT_OK) {
             val customGameName = data?.getStringExtra(CUSTOM_GAME_NAME)
             if (customGameName == null) {
                 Log.e(TAG, "Got null for custom game name in CreateActivity")
@@ -160,7 +160,7 @@ class MainActivity : AppCompatActivity() {
             // navigate to new activity
             val intent = Intent(this, CreateActivity::class.java)
             intent.putExtra(CUSTOM_BOARD_SIZE, customBoardSize)
-            startActivityForResult(intent, CREATE_REQUEST_CODE)
+            startActivityForResult(intent, CREATE_REQUEST.code)
         }
     }
 
@@ -180,11 +180,14 @@ class MainActivity : AppCompatActivity() {
                 R.id.rbMedium -> GameBoard.MEDIUM
                 else -> GameBoard.HARD
             }
-            // method to refresh data
-            gameName = null
-            customGameImages = null
+            refreshGameData()
             setupBoard()
         }
+    }
+
+    private fun refreshGameData() {
+        gameName = null
+        customGameImages = null
     }
 
     private fun showAlertDialog(

@@ -27,6 +27,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mymemory.ImagePickerAdapter
 import com.example.mymemory.R
 import com.example.mymemory.models.GameBoard
+import com.example.mymemory.utils.AccessCodeEnum.PICK_PHOTO
+import com.example.mymemory.utils.AccessCodeEnum.READ_EXTERNAL_PHOTOS
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -36,10 +38,7 @@ class CreateActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "CreateActivity"
-        private const val PICK_PHOTO_CODE = 1123 // use Enums maybe, do better
-        private const val READ_EXTERNAL_PHOTOS_CODE = 4801
         private const val READ_PHOTOS_PERMISSION = android.Manifest.permission.READ_EXTERNAL_STORAGE
-        private const val MAX_GAME_NAME_LENGTH = 14
     }
 
     private lateinit var rvImagePicker: RecyclerView
@@ -97,7 +96,7 @@ class CreateActivity : AppCompatActivity() {
                         requestPermission(
                             this@CreateActivity,
                             READ_PHOTOS_PERMISSION,
-                            READ_EXTERNAL_PHOTOS_CODE
+                            READ_EXTERNAL_PHOTOS.code
                         )
                     }
                 }
@@ -133,7 +132,7 @@ class CreateActivity : AppCompatActivity() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if (requestCode == READ_EXTERNAL_PHOTOS_CODE) {
+        if (requestCode == READ_EXTERNAL_PHOTOS.code) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 launchIntentForPhotos()
             } else {
@@ -149,7 +148,7 @@ class CreateActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != PICK_PHOTO_CODE || resultCode != Activity.RESULT_OK || data == null) {
+        if (requestCode != PICK_PHOTO.code || resultCode != Activity.RESULT_OK || data == null) {
             Log.w(TAG, "Did not get data from app launched, user likely changed their mind")
             return
         }
@@ -299,7 +298,7 @@ class CreateActivity : AppCompatActivity() {
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         startActivityForResult(
             Intent.createChooser(intent, "Selected desired pictures"),
-            PICK_PHOTO_CODE
+            PICK_PHOTO.code
         )
     }
 }
