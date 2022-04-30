@@ -112,13 +112,13 @@ class CreateActivity : AppCompatActivity() {
         return true
     }
 
-    /** Dictates the behaviour of the Back button */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.mi_refresh -> {
-                // TODO: relaunch screen
+//                 TODO: relaunch screen
                 return true
             }
+            /** Dictates the behaviour of the Back button */
             android.R.id.home -> {
                 finish()
                 return true

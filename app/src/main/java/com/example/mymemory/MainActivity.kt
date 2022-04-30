@@ -99,6 +99,8 @@ class MainActivity : AppCompatActivity() {
                 return
             }
             downloadGame(customGameName)
+        } else {
+            setupBoard()
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
