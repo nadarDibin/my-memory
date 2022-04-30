@@ -115,7 +115,7 @@ class CreateActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.mi_refresh -> {
-//                 TODO: relaunch screen
+                recreate()
                 return true
             }
             /** Dictates the behaviour of the Back button */
